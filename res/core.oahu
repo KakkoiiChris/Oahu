@@ -1,0 +1,44 @@
+/***************************************************
+ *    ____  _       _    _ _    _       _          *
+ *   / __ \ \|/\   | |  | | |  | |     / \         *
+ *  | |  | | /  \  | |__| | |  | |____/   \_       *
+ *  | |  | |/ /\ \ |  __  | |  | |\         |      *
+ *  | |__| / ____ \| |  | | |__| | \         \/|   *
+ *   \____/_/    \_\_|  |_|\____/   \___/\__   \   *
+ *                                          \___\  *
+ *        Copyright (C) 2019, KakkoiiChris         *
+ ***************************************************/
+
+class *Bool {
+    fun @size
+
+    fun @not
+
+    fun @and(that)
+
+    fun @or(that)
+
+    fun @xor(that)
+}
+
+class *Number {
+    fun @size
+
+    fun @not
+}
+
+class *String {
+    fun @size
+
+    fun @not
+}
+
+class *Table {
+    fun @size
+
+    fun @not
+}
+
+object Math {
+    fun @abs(n)
+}
