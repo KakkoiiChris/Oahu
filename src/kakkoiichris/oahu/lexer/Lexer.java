@@ -10,8 +10,8 @@
  *#################################################*/
 package kakkoiichris.oahu.lexer;
 
-import kakkoiichris.oahu.script.data.Null;
-import kakkoiichris.oahu.script.data.Unit;
+import kakkoiichris.oahu.runtime.data.Null;
+import kakkoiichris.oahu.runtime.data.Unit;
 import kakkoiichris.oahu.util.OahuError;
 import kakkoiichris.oahu.util.Source;
 import kakkoiichris.oahu.util.Util;

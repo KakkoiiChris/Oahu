@@ -11,9 +11,9 @@
 package kakkoiichris.oahu.parser;
 
 import kakkoiichris.oahu.lexer.Context;
-import kakkoiichris.oahu.script.Memory;
-import kakkoiichris.oahu.script.Script;
-import kakkoiichris.oahu.script.data.Instance;
+import kakkoiichris.oahu.runtime.Memory;
+import kakkoiichris.oahu.runtime.Runtime;
+import kakkoiichris.oahu.runtime.data.Instance;
 import kakkoiichris.oahu.util.Util;
 
 import java.util.ArrayList;
@@ -420,8 +420,8 @@ public sealed interface Stmt {
             }
         }
 
-        public record Link(int arity, BiFunction<Script, Data, Object> method) {
-            public Link(BiFunction<Script, Data, Object> method) {
+        public record Link(int arity, BiFunction<Runtime, Data, Object> method) {
+            public Link(BiFunction<Runtime, Data, Object> method) {
                 this(0, method);
             }
 
@@ -429,8 +429,8 @@ public sealed interface Stmt {
                 return args.size() == arity;
             }
 
-            public Object invoke(Script script, Instance instance, List<Object> args) {
-                return method.apply(script, new Data(instance, args));
+            public Object invoke(Runtime runtime, Instance instance, List<Object> args) {
+                return method.apply(runtime, new Data(instance, args));
             }
 
             public record Data(Instance instance, List<Object> args) {
@@ -552,9 +552,9 @@ public sealed interface Stmt {
             }
         }
 
-        public record Link(BiFunction<Script, Instance, Object> method) {
-            public Object invoke(Script script, Instance instance) {
-                return method.apply(script, instance);
+        public record Link(BiFunction<Runtime, Instance, Object> method) {
+            public Object invoke(Runtime runtime, Instance instance) {
+                return method.apply(runtime, instance);
             }
         }
     }

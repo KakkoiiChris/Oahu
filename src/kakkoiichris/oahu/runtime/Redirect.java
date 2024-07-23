@@ -8,7 +8,7 @@
  #                                          \___\  #
  #        Copyright (C) 2019, KakkoiiChris         #
  *#################################################*/
-package kakkoiichris.oahu.script;
+package kakkoiichris.oahu.runtime;
 
 import kakkoiichris.oahu.parser.Expr;
 

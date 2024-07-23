@@ -13,7 +13,7 @@ package kakkoiichris.oahu.util;
 import kakkoiichris.oahu.lexer.Context;
 import kakkoiichris.oahu.lexer.TokenType;
 import kakkoiichris.oahu.parser.Expr;
-import kakkoiichris.oahu.script.Redirect;
+import kakkoiichris.oahu.runtime.Redirect;
 
 import static kakkoiichris.oahu.util.Aesthetics.PALM;
 

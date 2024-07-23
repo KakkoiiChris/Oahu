@@ -8,7 +8,7 @@
  #                                          \___\  #
  #        Copyright (C) 2019, KakkoiiChris         #
  *#################################################*/
-package kakkoiichris.oahu.script.data;
+package kakkoiichris.oahu.runtime.data;
 
 public class Unit {
     private static Unit instance;

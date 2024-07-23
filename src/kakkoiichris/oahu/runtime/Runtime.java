@@ -8,23 +8,23 @@
  #                                          \___\  #
  #        Copyright (C) 2019, KakkoiiChris         #
  *#################################################*/
-package kakkoiichris.oahu.script;
+package kakkoiichris.oahu.runtime;
 
 import kakkoiichris.oahu.parser.Callable;
 import kakkoiichris.oahu.parser.Expr;
 import kakkoiichris.oahu.parser.Program;
 import kakkoiichris.oahu.parser.Stmt;
-import kakkoiichris.oahu.script.data.Instance;
-import kakkoiichris.oahu.script.data.Null;
-import kakkoiichris.oahu.script.data.Table;
-import kakkoiichris.oahu.script.data.Unit;
+import kakkoiichris.oahu.runtime.data.Instance;
+import kakkoiichris.oahu.runtime.data.Null;
+import kakkoiichris.oahu.runtime.data.Table;
+import kakkoiichris.oahu.runtime.data.Unit;
 import kakkoiichris.oahu.util.OahuError;
 import kakkoiichris.oahu.util.Source;
 import kakkoiichris.oahu.util.Util;
 
 import java.util.*;
 
-public class Script implements Expr.Visitor<Object>, Stmt.Visitor<Unit> {
+public class Runtime implements Expr.Visitor<Object>, Stmt.Visitor<Unit> {
     private static final Map<Class<?>, String> primitives = Map.of(
         Boolean.class, "Bool",
         Double.class, "Number",
@@ -37,7 +37,7 @@ public class Script implements Expr.Visitor<Object>, Stmt.Visitor<Unit> {
     private final Source source;
     private final Program program;
 
-    public Script(Source source, Program program) {
+    public Runtime(Source source, Program program) {
         this.source = source;
         this.program = program;
     }
@@ -688,6 +688,16 @@ public class Script implements Expr.Visitor<Object>, Stmt.Visitor<Unit> {
 
     @Override
     public Unit visitDeclarationStmt(Stmt.Declaration stmt) {
+        var constant = stmt.constant();
+        var mutable = stmt.mutable();
+        var destructured = stmt.destructured();
+        
+        var value = visit(stmt.expr());
+        
+        if (!destructured && !memory.newRef(constant, mutable, stmt.names().getFirst().value(), value)) {
+        
+        }
+        
         return Unit.get();
     }
 

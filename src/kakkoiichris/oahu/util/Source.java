@@ -12,7 +12,7 @@ package kakkoiichris.oahu.util;
 
 import kakkoiichris.oahu.lexer.Lexer;
 import kakkoiichris.oahu.parser.Parser;
-import kakkoiichris.oahu.script.Script;
+import kakkoiichris.oahu.runtime.Runtime;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -69,13 +69,13 @@ public record Source(String name, String text) {
         return text.lines().toList().get(row - 1);
     }
 
-    public Script prepare() {
+    public Runtime prepare() {
         var lexer = new Lexer(this);
 
         var parser = new Parser(this, lexer);
 
         var program = parser.parse();
 
-        return new Script(this, program);
+        return new Runtime(this, program);
     }
 }

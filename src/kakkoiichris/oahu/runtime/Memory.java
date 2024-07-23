@@ -8,11 +8,9 @@
  #                                          \___\  #
  #        Copyright (C) 2019, KakkoiiChris         #
  *#################################################*/
-package kakkoiichris.oahu.script;
+package kakkoiichris.oahu.runtime;
 
-import kakkoiichris.oahu.script.data.Instance;
-import kakkoiichris.oahu.util.OahuError;
-import kakkoiichris.oahu.util.OptionalMap;
+import kakkoiichris.oahu.runtime.data.Instance;
 
 import java.util.HashMap;
 import java.util.Map;
