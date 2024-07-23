@@ -15,7 +15,7 @@ import kakkoiichris.oahu.lexer.TokenType;
 import kakkoiichris.oahu.parser.Expr;
 import kakkoiichris.oahu.runtime.Redirect;
 
-import static kakkoiichris.oahu.util.Aesthetics.PALM;
+import static kakkoiichris.oahu.util.Aesthetics.ICON;
 
 public class OahuError extends RuntimeException {
     private OahuError(String message) {
@@ -24,7 +24,7 @@ public class OahuError extends RuntimeException {
 
     private static OahuError error(String stage, String message, Source source, Context context) {
         var string = STR."""
-            O'ahu \{stage} Error \{PALM} \{message}!
+            O'ahu \{stage} Error \{ICON} \{message}!
 
             \{context.row()}| \{source.getLine(context.row())}
             \{" ".repeat(context.column() + (String.valueOf(context.row()).length() + 1))}\{Aesthetics.UNDERLINE.repeat(context.length())}""";
@@ -33,7 +33,7 @@ public class OahuError extends RuntimeException {
     }
 
     private static OahuError error(String message) {
-        var string = STR."O'ahu Linker Error \{PALM} \{message}!";
+        var string = STR."O'ahu Linker Error \{ICON} \{message}!";
 
         return new OahuError(Aesthetics.wrapBox(string));
     }

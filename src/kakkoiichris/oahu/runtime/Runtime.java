@@ -81,7 +81,7 @@ public class Runtime implements Expr.Visitor<Object>, Stmt.Visitor<Unit> {
 
     @Override
     public Object visitUnaryExpr(Expr.Unary expr) {
-        var e = visit(expr.expr());
+        var e = Memory.fromReference(visit(expr.expr()));
 
         return switch (expr.operator()) {
             case NEGATIVE -> {
@@ -106,7 +106,7 @@ public class Runtime implements Expr.Visitor<Object>, Stmt.Visitor<Unit> {
                 throw OahuError.invalidUnaryOperand(e, expr.operator(), source, expr.context());
             }
 
-            case SPREAD, SIZE -> Unit.get();
+            default -> Unit.get();
         };
     }
 
@@ -114,13 +114,13 @@ public class Runtime implements Expr.Visitor<Object>, Stmt.Visitor<Unit> {
     public Object visitBinaryExpr(Expr.Binary expr) {
         return switch (expr.operator()) {
             case OR -> {
-                var l = visit(expr.left());
+                var l = Memory.fromReference(visit(expr.left()));
 
                 if (l instanceof Boolean b && b) {
                     yield true;
                 }
 
-                var r = visit(expr.right());
+                var r = Memory.fromReference(visit(expr.right()));
 
                 if (r instanceof Boolean) {
                     yield r;
@@ -130,13 +130,13 @@ public class Runtime implements Expr.Visitor<Object>, Stmt.Visitor<Unit> {
             }
 
             case AND -> {
-                var l = visit(expr.left());
+                var l = Memory.fromReference(visit(expr.left()));
 
                 if (l instanceof Boolean b && !b) {
                     yield false;
                 }
 
-                var r = visit(expr.right());
+                var r = Memory.fromReference(visit(expr.right()));
 
                 if (r instanceof Boolean) {
                     yield r;
@@ -146,24 +146,24 @@ public class Runtime implements Expr.Visitor<Object>, Stmt.Visitor<Unit> {
             }
 
             case EQUAL -> {
-                var l = visit(expr.left());
-                var r = visit(expr.right());
+                var l = Memory.fromReference(visit(expr.left()));
+                var r = Memory.fromReference(visit(expr.right()));
 
                 yield l.equals(r);
             }
 
             case NOT_EQUAL -> {
-                var l = visit(expr.left());
-                var r = visit(expr.right());
+                var l = Memory.fromReference(visit(expr.left()));
+                var r = Memory.fromReference(visit(expr.right()));
 
                 yield !l.equals(r);
             }
 
             case LESS -> {
-                var l = visit(expr.left());
+                var l = Memory.fromReference(visit(expr.left()));
 
                 if (l instanceof Double da) {
-                    var r = visit(expr.right());
+                    var r = Memory.fromReference(visit(expr.right()));
 
                     if (r instanceof Double db) {
                         yield da < db;
@@ -173,7 +173,7 @@ public class Runtime implements Expr.Visitor<Object>, Stmt.Visitor<Unit> {
                 }
 
                 if (l instanceof String sa) {
-                    var r = visit(expr.right());
+                    var r = Memory.fromReference(visit(expr.right()));
 
                     if (r instanceof String sb) {
                         yield sa.compareTo(sb) < 0;
@@ -186,10 +186,10 @@ public class Runtime implements Expr.Visitor<Object>, Stmt.Visitor<Unit> {
             }
 
             case LESS_EQUAL -> {
-                var l = visit(expr.left());
+                var l = Memory.fromReference(visit(expr.left()));
 
                 if (l instanceof Double da) {
-                    var r = visit(expr.right());
+                    var r = Memory.fromReference(visit(expr.right()));
 
                     if (r instanceof Double db) {
                         yield da <= db;
@@ -199,7 +199,7 @@ public class Runtime implements Expr.Visitor<Object>, Stmt.Visitor<Unit> {
                 }
 
                 if (l instanceof String sa) {
-                    var r = visit(expr.right());
+                    var r = Memory.fromReference(visit(expr.right()));
 
                     if (r instanceof String sb) {
                         yield sa.compareTo(sb) <= 0;
@@ -212,10 +212,10 @@ public class Runtime implements Expr.Visitor<Object>, Stmt.Visitor<Unit> {
             }
 
             case GREATER -> {
-                var l = visit(expr.left());
+                var l = Memory.fromReference(visit(expr.left()));
 
                 if (l instanceof Double da) {
-                    var r = visit(expr.right());
+                    var r = Memory.fromReference(visit(expr.right()));
 
                     if (r instanceof Double db) {
                         yield da > db;
@@ -225,7 +225,7 @@ public class Runtime implements Expr.Visitor<Object>, Stmt.Visitor<Unit> {
                 }
 
                 if (l instanceof String sa) {
-                    var r = visit(expr.right());
+                    var r = Memory.fromReference(visit(expr.right()));
 
                     if (r instanceof String sb) {
                         yield sa.compareTo(sb) > 0;
@@ -238,10 +238,10 @@ public class Runtime implements Expr.Visitor<Object>, Stmt.Visitor<Unit> {
             }
 
             case GREATER_EQUAL -> {
-                var l = visit(expr.left());
+                var l = Memory.fromReference(visit(expr.left()));
 
                 if (l instanceof Double da) {
-                    var r = visit(expr.right());
+                    var r = Memory.fromReference(visit(expr.right()));
 
                     if (r instanceof Double db) {
                         yield da >= db;
@@ -251,7 +251,7 @@ public class Runtime implements Expr.Visitor<Object>, Stmt.Visitor<Unit> {
                 }
 
                 if (l instanceof String sa) {
-                    var r = visit(expr.right());
+                    var r = Memory.fromReference(visit(expr.right()));
 
                     if (r instanceof String sb) {
                         yield sa.compareTo(sb) >= 0;
@@ -264,10 +264,10 @@ public class Runtime implements Expr.Visitor<Object>, Stmt.Visitor<Unit> {
             }
 
             case ADD -> {
-                var l = visit(expr.left());
+                var l = Memory.fromReference(visit(expr.left()));
 
                 if (l instanceof Double da) {
-                    var r = visit(expr.right());
+                    var r = Memory.fromReference(visit(expr.right()));
 
                     if (r instanceof Double db) {
                         yield da + db;
@@ -281,7 +281,7 @@ public class Runtime implements Expr.Visitor<Object>, Stmt.Visitor<Unit> {
                 }
 
                 if (l instanceof String sa) {
-                    var r = visit(expr.right());
+                    var r = Memory.fromReference(visit(expr.right()));
 
                     if (r instanceof Double db) {
                         yield sa + db;
@@ -298,10 +298,10 @@ public class Runtime implements Expr.Visitor<Object>, Stmt.Visitor<Unit> {
             }
 
             case SUBTRACT -> {
-                var l = visit(expr.left());
+                var l = Memory.fromReference(visit(expr.left()));
 
                 if (l instanceof Double da) {
-                    var r = visit(expr.right());
+                    var r = Memory.fromReference(visit(expr.right()));
 
                     if (r instanceof Double db) {
                         yield da - db;
@@ -314,13 +314,23 @@ public class Runtime implements Expr.Visitor<Object>, Stmt.Visitor<Unit> {
             }
 
             case MULTIPLY -> {
-                var l = visit(expr.left());
+                var l = Memory.fromReference(visit(expr.left()));
 
                 if (l instanceof Double da) {
-                    var r = visit(expr.right());
+                    var r = Memory.fromReference(visit(expr.right()));
 
                     if (r instanceof Double db) {
                         yield da * db;
+                    }
+
+                    throw OahuError.invalidRightOperand(r, expr.operator(), source, expr.right().context());
+                }
+
+                if (l instanceof String sa) {
+                    var r = Memory.fromReference(visit(expr.right()));
+
+                    if (r instanceof Double db) {
+                        yield sa.repeat(db.intValue());
                     }
 
                     throw OahuError.invalidRightOperand(r, expr.operator(), source, expr.right().context());
@@ -330,10 +340,10 @@ public class Runtime implements Expr.Visitor<Object>, Stmt.Visitor<Unit> {
             }
 
             case DIVIDE -> {
-                var l = visit(expr.left());
+                var l = Memory.fromReference(visit(expr.left()));
 
                 if (l instanceof Double da) {
-                    var r = visit(expr.right());
+                    var r = Memory.fromReference(visit(expr.right()));
 
                     if (r instanceof Double db) {
                         yield da / db;
@@ -346,10 +356,10 @@ public class Runtime implements Expr.Visitor<Object>, Stmt.Visitor<Unit> {
             }
 
             case MODULUS -> {
-                var l = visit(expr.left());
+                var l = Memory.fromReference(visit(expr.left()));
 
                 if (l instanceof Double da) {
-                    var r = visit(expr.right());
+                    var r = Memory.fromReference(visit(expr.right()));
 
                     if (r instanceof Double db) {
                         yield da % db;
@@ -365,7 +375,7 @@ public class Runtime implements Expr.Visitor<Object>, Stmt.Visitor<Unit> {
 
     @Override
     public Object visitAssignExpr(Expr.Assign expr) {
-        var value = visit(expr.value());
+        var value = Memory.fromReference(visit(expr.value()));
 
         var refOpt = memory.get(expr.name().value());
 
@@ -378,6 +388,8 @@ public class Runtime implements Expr.Visitor<Object>, Stmt.Visitor<Unit> {
         if (ref.isConstant()) {
             throw OahuError.reassignedConstant(source, expr.name().context());
         }
+
+        ref.setValue(value);
 
         return value;
     }

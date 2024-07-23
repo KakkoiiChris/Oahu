@@ -1,7 +1,7 @@
 package kakkoiichris.oahu.util;
 
 public class Aesthetics {
-    public static final String PALM = "\uD83C\uDF34";
+    public static final String ICON = "❀";
     public static final String UNDERLINE = "═";
 
     private static final char VERTICAL = '│';

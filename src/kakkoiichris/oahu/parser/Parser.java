@@ -744,13 +744,13 @@ public class Parser {
     private Expr.Value value() {
         Token<TokenType.Value> token = get();
 
-        return new Expr.Value(token.context(), token.value());
+        return new Expr.Value(token.context(), token.type().value());
     }
 
     private Expr.Name name() {
         Token<TokenType.Name> token = get();
 
-        return new Expr.Name(token.context(), (String) token.value());
+        return new Expr.Name(token.context(), token.type().name());
     }
 
     private Expr nested() {

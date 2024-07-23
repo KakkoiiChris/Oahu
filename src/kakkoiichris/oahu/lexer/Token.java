@@ -10,17 +10,9 @@
  *#################################################*/
 package kakkoiichris.oahu.lexer;
 
-public record Token<T extends TokenType>(Context context, T type, Object value) {
-    public Token(Context loc, T type) {
-        this(loc, type, null);
-    }
-    
+public record Token<T extends TokenType>(Context context, T type) {
     @Override
     public String toString() {
-        if (value == null) {
-            return String.format("%s%s", type, context);
-        }
-        
-        return String.format("%s%s (%s)", type, context, value);
+        return String.format("%s%s", type, context);
     }
 }
