@@ -232,7 +232,9 @@ public final class Lexer implements Iterator<Token<?>> {
     }
 
     private void skipWhitespace() {
-        while (skip(Lexer::isHorizontalWhitespace)) ;
+        while (match(Lexer::isHorizontalWhitespace)) {
+            step();
+        }
     }
 
     private void skipLineComment() {
@@ -275,7 +277,7 @@ public final class Lexer implements Iterator<Token<?>> {
     }
 
     private Token<TokenType.Value> binary() {
-        var context = here();
+        var start = here();
 
         mustSkip("0b");
 
@@ -286,6 +288,8 @@ public final class Lexer implements Iterator<Token<?>> {
         }
         while (match(Lexer::isBinaryDigit));
 
+        var context = start.rangeTo(here());
+
         var value = Util
             .parseInt(result.toString(), 2)
             .map(Integer::doubleValue)
@@ -295,7 +299,7 @@ public final class Lexer implements Iterator<Token<?>> {
     }
 
     private Token<TokenType.Value> hexadecimal() {
-        var context = here();
+        var start = here();
 
         mustSkip("0x");
 
@@ -306,6 +310,8 @@ public final class Lexer implements Iterator<Token<?>> {
         }
         while (match(Lexer::isHexadecimalDigit));
 
+        var context = start.rangeTo(here());
+
         var value = Util
             .parseInt(result.toString(), 16)
             .map(Integer::doubleValue)
@@ -315,7 +321,7 @@ public final class Lexer implements Iterator<Token<?>> {
     }
 
     private Token<TokenType.Value> decimal() {
-        var context = here();
+        var start = here();
 
         var result = new StringBuilder();
 
@@ -340,6 +346,8 @@ public final class Lexer implements Iterator<Token<?>> {
             while (match(Lexer::isDecimalDigit));
         }
 
+        var context = start.rangeTo(here());
+
         var value = Util
             .parseNumber(result.toString())
             .orElseThrow(() -> OahuError.invalidNumber(result.toString(), source, context));
@@ -348,7 +356,7 @@ public final class Lexer implements Iterator<Token<?>> {
     }
 
     private Token<?> word() {
-        var context = here();
+        var start = here();
 
         var result = new StringBuilder();
 
@@ -356,6 +364,8 @@ public final class Lexer implements Iterator<Token<?>> {
             take(result);
         }
         while (match(Lexer::isIdentifier));
+
+        var context = start.rangeTo(here());
 
         var keyword = Util.getEntry(TokenType.Keyword.class, result.toString().toUpperCase());
 
@@ -373,13 +383,15 @@ public final class Lexer implements Iterator<Token<?>> {
     }
 
     private char unicode(int size) {
-        var context = here();
+        var start = here();
 
         var result = new StringBuilder();
 
         for (var i = 0; i < size; i++) {
             take(result);
         }
+
+        var context = start.rangeTo(here());
 
         var value = Util
             .parseInt(result.toString(), 16)
@@ -389,7 +401,7 @@ public final class Lexer implements Iterator<Token<?>> {
     }
 
     private Token<TokenType.Value> string() {
-        var context = here();
+        var start = here();
 
         var result = new StringBuilder();
 
@@ -449,11 +461,13 @@ public final class Lexer implements Iterator<Token<?>> {
             }
         }
 
+        var context = start.rangeTo(here());
+
         return new Token<>(context, new TokenType.Value(result.toString()));
     }
 
     private Token<?> operator() {
-        var context = here();
+        var start = here();
 
         TokenType type;
 
@@ -532,8 +546,10 @@ public final class Lexer implements Iterator<Token<?>> {
             type = TokenType.EndOfLine.get();
         }
         else {
-            throw OahuError.illegalCharacter(peek(), source, context);
+            throw OahuError.illegalCharacter(peek(), source, here());
         }
+
+        var context = start.rangeTo(here());
 
         return new Token<>(context, type);
     }

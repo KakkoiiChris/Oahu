@@ -216,6 +216,9 @@ public sealed interface Expr {
         }
 
         public record Vararg(List<Expr> exprs) {
+            public Vararg() {
+                this(List.of());
+            }
         }
 
         public record Spread(Expr expr) {

@@ -134,7 +134,7 @@ public sealed interface Stmt {
                 return "%s (%s)".formatted(keyword, joiner.toString());
             }
 
-            return "%s %s".formatted(keyword, names.get(0).toString());
+            return "%s %s".formatted(keyword, names.getFirst().toString());
         }
     }
 
@@ -218,7 +218,7 @@ public sealed interface Stmt {
                     return "for (%s)".formatted(joiner.toString());
                 }
 
-                return "for %s".formatted(names.get(0).toString());
+                return "for %s".formatted(names.getFirst().toString());
             }
 
             if (destructured) {
@@ -231,7 +231,7 @@ public sealed interface Stmt {
                 return "for @ %s (%s)".formatted(label, joiner.toString());
             }
 
-            return "for @ %s %s".formatted(label, names.get(0).toString());
+            return "for @ %s %s".formatted(label, names.getFirst().toString());
         }
     }
 

@@ -17,7 +17,8 @@ import java.util.Scanner;
 
 import static kakkoiichris.oahu.util.Aesthetics.ICON;
 
-void main() {
+@SuppressWarnings({"preview", "BusyWait"})
+void main() throws InterruptedException {
     System.out.println("""
           ____  _       _    _ _    _
          / __ \\ \\|/\\   | |  | | |  | |      /\\
@@ -49,7 +50,9 @@ void main() {
                 System.out.println(Memory.fromReference(result.value()));
             }
             catch (OahuError error) {
-                error.printStackTrace();
+                System.err.println(error.getMessage());
+
+                Thread.sleep(20);
             }
         }
     }

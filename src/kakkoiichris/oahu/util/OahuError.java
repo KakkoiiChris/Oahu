@@ -17,17 +17,24 @@ import kakkoiichris.oahu.runtime.Redirect;
 
 import static kakkoiichris.oahu.util.Aesthetics.ICON;
 
+@SuppressWarnings("preview")
 public class OahuError extends RuntimeException {
     private OahuError(String message) {
         super(message);
     }
 
-    private static OahuError error(String stage, String message, Source source, Context context) {
+    private static OahuError error(Stage stage, String message, Source source, Context context) {
+        var row = context.row();
+        var line = source.getLine(context.row());
+
+        var spacing = " ".repeat(context.column() + (String.valueOf(context.row()).length() + 1));
+        var underline = Aesthetics.UNDERLINE.repeat(context.length());
+
         var string = STR."""
             O'ahu \{stage} Error \{ICON} \{message}!
 
-            \{context.row()}| \{source.getLine(context.row())}
-            \{" ".repeat(context.column() + (String.valueOf(context.row()).length() + 1))}\{Aesthetics.UNDERLINE.repeat(context.length())}""";
+            \{row}| \{line}
+            \{spacing}\{underline}""";
 
         return new OahuError(Aesthetics.wrapBox(string));
     }
@@ -39,7 +46,7 @@ public class OahuError extends RuntimeException {
     }
 
     private static OahuError forLexer(String message, Source source, Context context) {
-        return error("Lexer", message, source, context);
+        return error(Stage.LEXER, message, source, context);
     }
 
     public static OahuError earlyEndOfFile(Source source, Context context) {
@@ -71,7 +78,7 @@ public class OahuError extends RuntimeException {
     }
 
     private static OahuError forParser(String message, Source source, Context context) {
-        return error("Parser", message, source, context);
+        return error(Stage.PARSER, message, source, context);
     }
 
     public static OahuError earlyElseBranch(Source source, Context context) {
@@ -79,7 +86,7 @@ public class OahuError extends RuntimeException {
     }
 
     public static OahuError invalidArgumentName(Source source, Context context) {
-        return forParser("Argment name must be a variable name", source, context);
+        return forParser("Argument name must be first variable name", source, context);
     }
 
     public static OahuError invalidTerminal(TokenType invalid, Source source, Context context) {
@@ -95,7 +102,7 @@ public class OahuError extends RuntimeException {
     }
 
     private static OahuError forScript(String message, Source source, Context context) {
-        return error("Script", message, source, context);
+        return error(Stage.RUNTIME, message, source, context);
     }
 
     public static OahuError invalidUnaryOperand(Object operand, Expr.Unary.Operator operator, Source source, Context context) {
@@ -131,7 +138,7 @@ public class OahuError extends RuntimeException {
     }
 
     public static OahuError undefinedName(Expr.Name name, Source source, Context context) {
-        return forScript("Name '%s' has not been defined".formatted(name), source, context);
+        return forScript("Name '%s' has not been defined".formatted(name.value()), source, context);
     }
 
     public static OahuError unhandledRedirect(Redirect redirect, Source source, Context context) {
@@ -143,35 +150,35 @@ public class OahuError extends RuntimeException {
     }
 
     public static OahuError invalidFormatPositionError(String position) {
-        return forLinker(String.format("String format position '%s' must be a number!", position));
+        return forLinker(STR."String format position '\{position}' must be first number!");
     }
 
     public static OahuError invalidLinkArgumentError(Object argument, String paramID) {
-        return forLinker(String.format("Argument '%s' for link function parameter '%s' is invalid!", argument, paramID));
+        return forLinker(STR."Argument '\{argument}' for link function parameter '\{paramID}' is invalid!");
     }
 
     public static OahuError invalidStringIndexError(double index) {
-        return forLinker(String.format("String index '%d' out of bounds!", (int) index));
+        return forLinker(STR."String index '\{(int) index}' out of bounds!");
     }
 
     public static OahuError linkResolutionError(String path, int expected, int received) {
-        return forLinker(String.format("Linked function '%s' expected '%d' arguments; received '%d'!", path, expected, received));
+        return forLinker(STR."Linked function '\{path}' expected '\{expected}' arguments; received '\{received}'!");
     }
 
-    public static OahuError missingFunctionLinkError(String path) {
-        return forLinker(String.format("Link for function '%s' is unavailable!", path));
+    public static OahuError missingFunctionLink(String path) {
+        return forLinker(STR."Link for function '\{path}' is unavailable!");
     }
 
-    public static OahuError missingLinkError(Expr.Name name) {
-        return forLinker(String.format("Link '%s' is unavailable!", name));
+    public static OahuError missingLink(Expr.Name name) {
+        return forLinker(STR."Link for file '\{name.value()}' is unavailable!");
     }
 
     public static OahuError missingClassLinkError(String path) {
-        return forLinker(String.format("Link for class '%s' is unavailable!", path));
+        return forLinker(STR."Link for class '\{path}' is unavailable!");
     }
 
     public static OahuError missingMemberError(String path) {
-        return forLinker(String.format("Instance member '%s' could not be linked!", path));
+        return forLinker(STR."Instance member '\{path}' could not be linked!");
     }
 
     public static OahuError negativeIndexError() {

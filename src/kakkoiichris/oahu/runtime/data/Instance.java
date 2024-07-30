@@ -45,6 +45,38 @@ public class Instance extends Memory.Scope {
         return Optional.empty();
     }
 
+    public Optional<Boolean> asBoolean() {
+        if (this instanceof Primitive.Bool bool) {
+            return Optional.of(bool.primitive);
+        }
+
+        return Optional.empty();
+    }
+
+    public Optional<Double> asNumber() {
+        if (this instanceof Primitive.Number number) {
+            return Optional.of(number.primitive);
+        }
+
+        return Optional.empty();
+    }
+
+    public Optional<String> asString() {
+        if (this instanceof Primitive.String string) {
+            return Optional.of(string.primitive);
+        }
+
+        return Optional.empty();
+    }
+
+    public Optional<Table> asTable() {
+        if (this instanceof Primitive.Table table) {
+            return Optional.of(table.primitive);
+        }
+
+        return Optional.empty();
+    }
+
     public static Object fromInstance(Object x) {
         if (x instanceof Primitive<?> p) {
             return p.getPrimitive();
@@ -65,6 +97,7 @@ public class Instance extends Memory.Scope {
 
             public Bool(Stmt.Class clazz, Memory.Scope parent, Runtime runtime, boolean primitive) {
                 super(clazz, parent, runtime);
+
                 this.primitive = primitive;
             }
 
@@ -78,6 +111,7 @@ public class Instance extends Memory.Scope {
 
             public Number(Stmt.Class clazz, Memory.Scope parent, Runtime runtime, double primitive) {
                 super(clazz, parent, runtime);
+
                 this.primitive = primitive;
             }
 
@@ -91,6 +125,7 @@ public class Instance extends Memory.Scope {
 
             public String(Stmt.Class clazz, Memory.Scope parent, Runtime runtime, java.lang.String primitive) {
                 super(clazz, parent, runtime);
+
                 this.primitive = primitive;
             }
 
@@ -104,6 +139,7 @@ public class Instance extends Memory.Scope {
 
             public Table(Stmt.Class clazz, Memory.Scope parent, Runtime runtime, kakkoiichris.oahu.runtime.data.Table primitive) {
                 super(clazz, parent, runtime);
+
                 this.primitive = primitive;
             }
 

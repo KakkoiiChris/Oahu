@@ -16,15 +16,15 @@ public record Context(String name, int row, int column, int length) {
     }
 
     public Context rangeTo(Context other) {
-        return new Context(name, row, column, other.length - length + 1);
+        return new Context(name, row, column, other.column - column);
     }
-    
+
     @Override
     public String toString() {
         if (name.isEmpty()) {
             return "";
         }
-        
+
         return " @ %s (%d, %d)".formatted(name, row, column);
     }
 }

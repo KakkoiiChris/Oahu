@@ -18,6 +18,8 @@ import kakkoiichris.oahu.runtime.data.Instance;
 import kakkoiichris.oahu.runtime.data.Null;
 import kakkoiichris.oahu.runtime.data.Table;
 import kakkoiichris.oahu.runtime.data.Unit;
+import kakkoiichris.oahu.runtime.linker.Link;
+import kakkoiichris.oahu.runtime.linker.Linker;
 import kakkoiichris.oahu.util.OahuError;
 import kakkoiichris.oahu.util.Source;
 import kakkoiichris.oahu.util.Util;
@@ -36,10 +38,13 @@ public class Runtime implements Expr.Visitor<Object>, Stmt.Visitor<Unit> {
 
     private final Source source;
     private final Program program;
+    private final Linker linker;
 
-    public Runtime(Source source, Program program) {
+    public Runtime(Source source, Program program, Link... links) {
         this.source = source;
         this.program = program;
+
+        linker = new Linker(source, links);
     }
 
     public Result run() {
@@ -703,13 +708,13 @@ public class Runtime implements Expr.Visitor<Object>, Stmt.Visitor<Unit> {
         var constant = stmt.constant();
         var mutable = stmt.mutable();
         var destructured = stmt.destructured();
-        
+
         var value = visit(stmt.expr());
-        
+
         if (!destructured && !memory.newRef(constant, mutable, stmt.names().getFirst().value(), value)) {
-        
+
         }
-        
+
         return Unit.get();
     }
 
@@ -771,17 +776,17 @@ public class Runtime implements Expr.Visitor<Object>, Stmt.Visitor<Unit> {
 
     @Override
     public Unit visitFunStmt(Stmt.Fun stmt) {
-        if (stmt.isLinked()) {
-            //TODO Link Function
+        var copy = stmt.copy();
+
+        if (copy.isLinked()) {
+            copy.setLink(linker.getFunction(copy.path()).orElseThrow(() -> OahuError.missingFunctionLink(copy.path())));
         }
 
-        var copy = stmt.copy();
+        copy.setScope(memory.peek());
 
         if (!memory.newLet(false, stmt.name().value(), copy)) {
             throw OahuError.redefinedName(stmt.name(), source, stmt.context());
         }
-
-        copy.setScope(memory.peek());
 
         return Unit.get();
     }

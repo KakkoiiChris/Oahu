@@ -1,5 +1,6 @@
 package kakkoiichris.oahu.util;
 
+@SuppressWarnings("preview")
 public class Aesthetics {
     public static final String ICON = "❀";
     public static final String UNDERLINE = "═";
@@ -44,19 +45,27 @@ public class Aesthetics {
         return builder.toString();
     }
 
-    public static String padEnd(String s, int length) {
-        if (length < 0)
-            throw new IllegalArgumentException("Desired length $length is less than zero.");
+    public static String padStart(String s, int length) {
+        if (length < 0) {
+            throw new IllegalArgumentException(STR."Desired length \{length} is less than zero.");
+        }
 
-        if (length <= s.length())
+        if (length <= s.length()) {
             return s;
+        }
 
-        var sb = new StringBuilder(length);
+        return String.valueOf(' ').repeat(length - s.length()) + s;
+    }
 
-        sb.append(s);
+    public static String padEnd(String s, int length) {
+        if (length < 0) {
+            throw new IllegalArgumentException(STR."Desired length \{length} is less than zero.");
+        }
 
-        sb.append(String.valueOf(' ').repeat(length - s.length()));
+        if (length <= s.length()) {
+            return s;
+        }
 
-        return sb.toString();
+        return s + String.valueOf(' ').repeat(length - s.length());
     }
 }

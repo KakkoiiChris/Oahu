@@ -98,7 +98,7 @@ public sealed interface Callable<T extends Callable.Param> permits Stmt.Fun, Stm
         }
         
         if (isVararg && exprs.getLast() == Expr.Empty.get()) {
-            exprs.set(exprs.size() - 1, Expr.toExpr(new Expr.Invoke.Vararg(List.of())));
+            exprs.set(exprs.size() - 1, Expr.toExpr(new Expr.Invoke.Vararg()));
         }
         
         if (exprs.stream().allMatch(expr -> expr != Expr.Empty.get())) {

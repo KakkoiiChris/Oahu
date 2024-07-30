@@ -52,4 +52,23 @@ public class Util {
             return Optional.empty();
         }
     }
+
+    public static String toTitleCase(String input) {
+        var titleCase = new StringBuilder(input.length());
+        var nextTitleCase = true;
+
+        for (var c : input.toCharArray()) {
+            if (Character.isSpaceChar(c)) {
+                nextTitleCase = true;
+            }
+            else if (nextTitleCase) {
+                c = Character.toTitleCase(c);
+                nextTitleCase = false;
+            }
+
+            titleCase.append(c);
+        }
+
+        return titleCase.toString();
+    }
 }

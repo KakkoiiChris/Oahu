@@ -108,7 +108,9 @@ public class Parser {
     }
 
     private void newLine() {
-        while (skip(TokenType.EndOfLine.get())) ;
+        while (match(TokenType.EndOfLine.get())) {
+            step();
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -131,10 +133,10 @@ public class Parser {
 
         if (name.value().matches("_+")) {
             if (name.value().length() == 1) {
-                OahuWarning.discardedName(name.context());
+                OahuWarning.discardedName(source, name.context());
             }
             else {
-                OahuWarning.vagueName(name.context());
+                OahuWarning.vagueName(source, name.context());
             }
         }
     }
