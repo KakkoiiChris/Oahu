@@ -925,7 +925,9 @@ public class Parser {
 
         var subject = Expr.Name.none();
 
-        if (skip(TokenType.Symbol.LEFT_PAREN)) {
+        var hasSubject = skip(TokenType.Symbol.LEFT_PAREN);
+
+        if (hasSubject) {
             subject = name();
 
             mustSkip(TokenType.Symbol.RIGHT_PAREN);
@@ -946,15 +948,13 @@ public class Parser {
                 break;
             }
 
-            var branchLocation = here();
+            var branchContext = here();
 
-            var condition = expr();
-
-            mustSkipLine(TokenType.Symbol.ARROW);
-
-            var body = exprBody();
-
-            branches.add(new Expr.When.Branch(branchLocation, condition, body));
+            branches.add(
+                hasSubject
+                    ? subjectBranch(branchContext, subject)
+                    : branch(branchContext)
+            );
 
             newLine();
         }
@@ -964,7 +964,45 @@ public class Parser {
             throw OahuError.earlyElseBranch(source, here());
         }
 
-        return new Expr.When(location, subject, branches, elze);
+        return new Expr.When(location, branches, elze);
+    }
+
+    private Expr.When.Branch branch(Context context) {
+        var condition = expr();
+
+        mustSkipLine(TokenType.Symbol.ARROW);
+
+        var body = exprBody();
+
+        return new Expr.When.Branch(context, condition, body);
+    }
+
+    private Expr.When.Branch subjectBranch(Context context, Expr subject) {
+        Expr.Binary.Operator operator;
+
+        if (currentToken.type() == TokenType.Symbol.LESS) {
+            operator = Expr.Binary.Operator.LESS;
+        }
+        else if (currentToken.type() == TokenType.Symbol.LESS_EQUAL) {
+            operator = Expr.Binary.Operator.LESS;
+        }
+        else if (currentToken.type() == TokenType.Symbol.GREATER) {
+            operator = Expr.Binary.Operator.LESS;
+        }
+        else if (currentToken.type() == TokenType.Symbol.GREATER_EQUAL) {
+            operator = Expr.Binary.Operator.LESS;
+        }
+        else{
+            operator= Expr.Binary.Operator.EQUAL;
+        }
+
+        var condition = new Expr.Binary(context, operator, subject, additive());
+
+        mustSkipLine(TokenType.Symbol.ARROW);
+
+        var body = exprBody();
+
+        return new Expr.When.Branch(context, condition, body);
     }
 
     private Expr tryExpr() {

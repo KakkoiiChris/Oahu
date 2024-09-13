@@ -286,7 +286,7 @@ public sealed interface Expr {
         }
     }
 
-    record When(Context context, Name subject, List<Branch> branches, Expr elze) implements Expr {
+    record When(Context context, List<Branch> branches, Expr elze) implements Expr {
         @Override
         public <X> X accept(Visitor<X> visitor) {
             return visitor.visitWhenExpr(this);
@@ -294,11 +294,7 @@ public sealed interface Expr {
 
         @Override
         public String toString() {
-            if (subject.isEmpty()) {
-                return "when";
-            }
-
-            return "when %s".formatted(subject);
+            return "when";
         }
 
         public record Branch(Context context, Expr condition, Expr body) {

@@ -678,7 +678,15 @@ public class Runtime implements Expr.Visitor<Object>, Stmt.Visitor<Unit> {
 
     @Override
     public Object visitWhenExpr(Expr.When expr) {
-        return null;
+        for (var branch : expr.branches()) {
+            var condition = visit(branch.condition());
+
+            if (condition instanceof Boolean bool && bool) {
+                return visit(branch.body());
+            }
+        }
+
+        return visit(expr.elze());
     }
 
     @Override
