@@ -321,7 +321,7 @@ public sealed interface Expr {
 
         @Override
         public String toString() {
-            return "statement<%s>".formatted(stmt);
+            return STR."statement<\{stmt}>";
         }
     }
 }

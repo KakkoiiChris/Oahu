@@ -11,8 +11,9 @@
 package kakkoiichris.oahu.lexer;
 
 public record Token<T extends TokenType>(Context context, T type) {
+    @SuppressWarnings("preview")
     @Override
     public String toString() {
-        return String.format("%s%s", type, context);
+        return STR."\{type}\{context}";
     }
 }

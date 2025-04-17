@@ -9,25 +9,44 @@
  *        Copyright (C) 2019, KakkoiiChris         *
  ***************************************************/
 
+import kakkoiichris.kotoba.Console;
+import kakkoiichris.kotoba.Font;
 import kakkoiichris.oahu.runtime.Memory;
 import kakkoiichris.oahu.util.OahuError;
 import kakkoiichris.oahu.util.Source;
 
-import java.util.Scanner;
+import javax.imageio.ImageIO;
+import java.io.IOException;
+import java.util.Objects;
 
 import static kakkoiichris.oahu.util.Aesthetics.ICON;
 
-void main(String... args) throws InterruptedException {
-    switch (args.length) {
-        case 0 -> repl();
+void main(String[] args) throws InterruptedException, IOException {
+    var config = new Console.Config()
+        .title("O'ahu Console")
+        .font(new Font("/font/Consolas24.bff"))
+        .icon(ImageIO.read(Objects.requireNonNull(Source.class.getResourceAsStream("/icon.png"))));
 
-        case 1 -> file(args[0]);
+    var console = new Console(config);
+
+    console.open();
+
+    switch (args.length) {
+        case 0 -> repl(console);
+
+        case 1 -> file(console, args[0]);
+
+        default -> console.writeLine("Usage: oahu [fileName]");
     }
+
+    console.pause();
+
+    console.close();
 }
 
 @SuppressWarnings({"preview", "BusyWait"})
-private void repl() throws InterruptedException {
-    System.out.println("""
+private void repl(Console console) throws InterruptedException {
+    console.writeLine("""
           ____  _       _    _ _    _
          / __ \\ \\|/\\   | |  | | |  | |      /\\
         | |  | | /  \\  | |__| | |  | | ____/  \\_
@@ -36,37 +55,38 @@ private void repl() throws InterruptedException {
          \\____/_/    \\_\\_|  |_|\\____/   \\___/\\__   \\
                                                 \\___\\
               Copyright (C) 2019, KakkoiiChris
-        \s""");
+        """);
 
-    try (var in = new Scanner(System.in)) {
-        while (in.hasNextLine()) {
-            System.out.print(STR."O'ahu \{ICON} ");
+    console.setPrompt("O'ahu > ");
 
-            var code = in.nextLine();
+    do {
+        var code = console.readLine();
 
-            if (code.isBlank()) {
-                break;
-            }
+        if (code.isEmpty()) {
+            break;
+        }
 
-            try {
-                var source = Source.ofREPL(code);
+        try {
+            var source = Source.ofREPL(code.get());
 
-                var script = source.prepare();
+            var script = source.prepare();
 
-                var result = script.run();
+            var result = script.run();
 
-                System.out.println(Memory.fromReference(result.value()));
-            }
-            catch (OahuError error) {
-                System.err.println(error.getMessage());
+            console.writeLine(Memory.fromReference(result.value()));
+        }
+        catch (OahuError error) {
+            console.setColor(0xFF0000);
+            console.writeLine(error.getMessage());
+            console.setColor(0xFFFFFF);
 
-                Thread.sleep(20);
-            }
+            Thread.sleep(20);
         }
     }
+    while (console.isOpen());
 }
 
-private void file(String path) {
+private void file(Console console, String path) {
     try {
         var source = Source.ofFile(path);
 
@@ -74,9 +94,11 @@ private void file(String path) {
 
         var result = script.run();
 
-        System.out.println(Memory.fromReference(result.value()));
+        console.writeLine(Memory.fromReference(result.value()));
     }
     catch (OahuError error) {
-        System.err.println(error.getMessage());
+        console.setColor(0xFF0000);
+        console.writeLine(error.getMessage());
+        console.setColor(0xFFFFFF);
     }
 }

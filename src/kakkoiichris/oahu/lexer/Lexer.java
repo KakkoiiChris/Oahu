@@ -79,7 +79,7 @@ public final class Lexer implements Iterator<Token<?>> {
     }
 
     private Context here() {
-        return new Context(source.name(), row, column, 1);
+        return new Context(source.name(), row, column, pos, 1);
     }
 
     private void step(int offset) {
